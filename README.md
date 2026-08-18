@@ -1,7 +1,3 @@
-Here is a refined, easy-to-understand `README.md` written in simple UK English, based on the compiled system files.
-
----
-
 # Mfano Bora Resources Portal
 
 ## 📖 What the System Is
