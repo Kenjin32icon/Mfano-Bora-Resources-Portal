@@ -1,63 +1,53 @@
+Here is a refined, easy-to-understand `README.md` written in simple UK English, based on the compiled system files.
+
+---
+
 # Mfano Bora Resources Portal
 
-The Mfano Bora Resources Portal is a central document management and resource system designed to store, manage, and deliver 102 core organizational resources across categories like Attachment & Careers, ICT, Transport, and Corporate Awards.
+## 📖 What the System Is
+
+The Mfano Bora Resources Portal is a central digital library designed to safely store, manage, and share important organisational documents. It acts as a single hub where users can easily find and download materials such as industrial attachment forms, ICT cybersecurity guides, road safety manuals, and corporate award brochures.
+
+## ⚙️ How It Works
+
+The project is divided into three main components working together to deliver a seamless experience:
+
+* **The Database (PostgreSQL):** This stores the structure of the portal, organising files logically into Categories (e.g., "Transport & Fleet Safety") and Sub-Categories (e.g., "Road Safety Guides"). It also keeps track of how many times a file has been downloaded.
+
+
+* **The Backend API (Node.js):** This acts as the secure bridge between the database and the user interface. It processes searches, fetches the correct documents, and requires a secure secret key (`x-api-key`) before allowing anyone to add or delete files.
+
+
+* **The Admin Dashboard (React):** A simple, user-friendly control panel for Mfano Bora staff. It allows non-technical administrators to securely upload new PDFs, categorise them, feature important documents on the home page, and manage the knowledge base without needing to write code.
+
+
 
 ---
 
-## System Directory Structure
+## 🚀 Getting Started
 
-```text
-Mfano Bora Resources_Portal/
-├── admin-dashboard/          # React.js Admin Portal (Resource upload & metadata management)
-│   ├── src/
-│   │   ├── pages/            # Page components (KnowledgeBaseEditor / Admin Panel)
-│   │   └── utils/            # RBAC and authentication helpers
-│   └── package.json
-├── backend-api/              # Node.js & Express REST API Server
-│   ├── config/               # Database pool and environment config
-│   ├── controllers/          # Resource & Category request handlers
-│   ├── models/               # Query builders and data definitions
-│   ├── routes/               # API Endpoints (/api/resources, /api/admin)
-│   ├── server.js             # Main server entry point
-│   └── package.json
-├── database/                 # PostgreSQL Database Schemas & Seed Data
-│   ├── schema.sql            # Table definitions (categories, sub_categories, resources)
-│   └── seed.sql              # Initial category data & preliminary links
-├── Docs/                     # Implementation guides, team workflows, and specs
-├── .env                      # Unified environment variable store
-├── docker-compose.yml        # Multi-container orchestration config
-└── README.md                 # System overview and setup guide
+Follow these step-by-step instructions to clone the repository, install the necessary dependencies, and run the project locally on your machine.
 
-```
+### 1. Clone the Repository
 
----
-
-## Installation & Setup Guide
-
-### 1. Repository Cloning
-
-Clone the repository and enter the project directory:
+First, download the project files to your computer using Git. Open your terminal and run:
 
 ```bash
-git clone https://github.com/mfano-bora/resources-portal.git
-cd mfano-bora-chatbot-system
+git clone https://github.com/Kenjin32icon/Mfano-Bora-Resources-Portal.git
+cd Mfano-Bora-Resources-Portal
 
 ```
 
-### 2. Environment Configuration
+### 2. Set Up the Database
 
-Create a `.env` file in the root directory and add the following configuration:
+You need to have PostgreSQL installed and running on your computer.
 
-```env
-DATABASE_URL=postgresql://postgres:postgres@localhost:5432/mfano_bora_db
-PORT=5000
-REACT_APP_API_URL=http://localhost:5000/api
+1. Create a new database named `mfano_bora_db`.
 
-```
 
-### 3. Database Initialization
+2. Run the provided SQL scripts to build the tables and insert the initial sample data:
 
-Ensure PostgreSQL is running locally or in Docker, then initialize the relational schema and core seeds:
+
 
 ```bash
 psql -U postgres -d mfano_bora_db -f database/schema.sql
@@ -65,34 +55,70 @@ psql -U postgres -d mfano_bora_db -f database/seed.sql
 
 ```
 
-### 4. Dependency Installation & Local Execution
+### 3. Configure Environment Variables
 
-* **Backend Server (`backend-api`):**
+You must set up secret configuration files (called `.env` files) so the different parts of the system can talk to each other securely.
+
+**For the Backend API:**
+Create a file named `.env` inside the `backend-api/` folder and add the following:
+
+```env
+PORT=5000
+DATABASE_URL=postgresql://postgres:postgres@localhost:5432/mfano_bora_db
+ADMIN_API_KEY=your_secret_admin_password
+
+```
+
+**For the Admin Dashboard:**
+Create a file named `.env` inside the `admin-dashboard/` folder and add the following:
+
+```env
+REACT_APP_ADMIN_API_KEY=your_secret_admin_password
+
+```
+
+(Note: Ensure the password is exactly the same in both files so the dashboard can verify its identity with the backend.)
+
+### 4. Install Dependencies
+
+You need to install the required software packages for both the backend and the frontend.
+
+**Install Backend Dependencies:**
+
 ```bash
 cd backend-api
 npm install
+
+```
+
+**Install Frontend Dependencies:**
+
+```bash
+cd ../admin-dashboard
+npm install
+
+```
+
+### 5. Run the Project
+
+To see the system in action, you will need to run the backend and the dashboard at the same time. It is easiest to open two separate terminal windows.
+
+**Terminal 1: Start the Backend API**
+
+```bash
+cd backend-api
 npm run dev
 
 ```
 
+You should see a message saying "Backend Server running on port 5000".
 
-* **Admin Dashboard (`admin-dashboard`):**
+**Terminal 2: Start the Admin Dashboard**
+
 ```bash
-cd ../admin-dashboard
-npm install
+cd admin-dashboard
 npm start
 
 ```
 
-
-
----
-
-## Collaborative Workflow & Team Integration Protocol
-
-To ensure seamless integration across the 11-developer rollout plan, team members must adhere to the following task handshakes:
-
-* **Git Branching Convention:** Feature work must be performed on isolated branches named `feature/dev-[ID]-[short-description]` (e.g., `feature/dev-5-search-bar`).
-* **API Handshake (Devs 1, 2, 3 & Frontend Devs 4–6):** The JSON schema returned by `GET /api/resources` and `GET /api/categories` serves as the contract between the API Architect (Dev 2) and Frontend developers (Devs 4–6).
-* **Content Upload Protocol (Devs 7–10):** Content uploaders must store PDF binaries on AWS S3 or Cloudinary and input the resulting public URLs directly into the Admin Panel (`/admin-dashboard`).
-* **QA & Performance Validation (Dev 11):** Prior to merging into the `main` branch, Developer 11 must audit search functionality, link connectivity, and ensure database query times remain sub-100ms.
+This will open the React Admin Panel in your web browser, allowing you to view and manage your existing resources.
