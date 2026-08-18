@@ -2,6 +2,11 @@ import React, { useState, useEffect } from 'react';
 
 const API_BASE = 'http://localhost:5000/api';
 
+// This key must match ADMIN_API_KEY in backend-api/.env.
+// For a real deployment, load this from a login-protected admin session
+// instead of hardcoding it in the frontend bundle.
+const ADMIN_API_KEY = process.env.REACT_APP_ADMIN_API_KEY || '';
+
 export default function AdminResourcePanel() {
   const [resources, setResources] = useState([]);
   const [categories, setCategories] = useState([]);
@@ -40,7 +45,10 @@ export default function AdminResourcePanel() {
     try {
       const res = await fetch(`${API_BASE}/admin/resources`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          'x-api-key': ADMIN_API_KEY,
+        },
         body: JSON.stringify(formData),
       });
 
@@ -61,7 +69,10 @@ export default function AdminResourcePanel() {
 
   const handleDelete = async (id) => {
     if (!window.confirm('Are you sure you want to delete this resource?')) return;
-    await fetch(`${API_BASE}/admin/resources/${id}`, { method: 'DELETE' });
+    await fetch(`${API_BASE}/admin/resources/${id}`, {
+      method: 'DELETE',
+      headers: { 'x-api-key': ADMIN_API_KEY },
+    });
     fetchResources();
   };
 
@@ -74,25 +85,25 @@ export default function AdminResourcePanel() {
       <div style={{ background: '#f5f5f5', padding: '20px', borderRadius: '8px', marginBottom: '30px' }}>
         <h2>Add New Resource</h2>
         {message && <p style={{ fontWeight: 'bold', color: message.startsWith('Error') ? 'red' : 'green' }}>{message}</p>}
-        
+
         <form onSubmit={handleSubmit} style={{ display: 'grid', gap: '15px' }}>
           <div>
             <label style={{ display: 'block', fontWeight: 'bold' }}>Resource Title:</label>
-            <input 
-              type="text" 
+            <input
+              type="text"
               required
-              value={formData.title} 
-              onChange={(e) => setFormData({ ...formData, title: e.target.value })} 
-              style={{ width: '100%', padding: '8px', marginTop: '4px' }} 
+              value={formData.title}
+              onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+              style={{ width: '100%', padding: '8px', marginTop: '4px' }}
               placeholder="e.g., Industrial Attachment Application Form 2026"
             />
           </div>
 
           <div>
             <label style={{ display: 'block', fontWeight: 'bold' }}>Category & Sub-Category:</label>
-            <select 
+            <select
               required
-              value={formData.sub_category_id} 
+              value={formData.sub_category_id}
               onChange={(e) => setFormData({ ...formData, sub_category_id: e.target.value })}
               style={{ width: '100%', padding: '8px', marginTop: '4px' }}
             >
@@ -109,40 +120,40 @@ export default function AdminResourcePanel() {
 
           <div>
             <label style={{ display: 'block', fontWeight: 'bold' }}>Document URL (AWS S3 or Cloudinary):</label>
-            <input 
-              type="url" 
+            <input
+              type="url"
               required
-              value={formData.file_url} 
-              onChange={(e) => setFormData({ ...formData, file_url: e.target.value })} 
-              style={{ width: '100%', padding: '8px', marginTop: '4px' }} 
+              value={formData.file_url}
+              onChange={(e) => setFormData({ ...formData, file_url: e.target.value })}
+              style={{ width: '100%', padding: '8px', marginTop: '4px' }}
               placeholder="https://storage.mfanoboraafrica.com/docs/attachment-form.pdf"
             />
           </div>
 
           <div>
             <label style={{ display: 'block', fontWeight: 'bold' }}>Description:</label>
-            <textarea 
+            <textarea
               required
-              value={formData.description} 
-              onChange={(e) => setFormData({ ...formData, description: e.target.value })} 
-              style={{ width: '100%', padding: '8px', marginTop: '4px', height: '80px' }} 
+              value={formData.description}
+              onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+              style={{ width: '100%', padding: '8px', marginTop: '4px', height: '80px' }}
               placeholder="Provide a concise summary of the document content..."
             />
           </div>
 
           <div>
             <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
-              <input 
-                type="checkbox" 
-                checked={formData.is_featured} 
-                onChange={(e) => setFormData({ ...formData, is_featured: e.target.checked })} 
+              <input
+                type="checkbox"
+                checked={formData.is_featured}
+                onChange={(e) => setFormData({ ...formData, is_featured: e.target.checked })}
               />
               Mark as "Featured Resource" on Hero Banner
             </label>
           </div>
 
-          <button 
-            type="submit" 
+          <button
+            type="submit"
             disabled={loading}
             style={{ padding: '10px 20px', background: '#0056b3', color: '#fff', border: 'none', borderRadius: '4px', cursor: 'pointer' }}
           >
