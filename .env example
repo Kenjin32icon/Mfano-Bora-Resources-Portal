@@ -1,0 +1,3 @@
+DATASBASE_URL=              #PostgreSQL connection string (e.g., postgresql://postgres:postgres@localhost:5432/mfano_bora_db).
+PORT=                       #Express server runtime port (default: 5000).
+REACT_APP_API_URL=          #Base URL for API requests made by the React Admin Panel (e.g., http://localhost:5000/api).
