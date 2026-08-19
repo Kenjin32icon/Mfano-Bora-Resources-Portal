@@ -1,120 +1,50 @@
 # Mfano Bora Resources Portal
 
-## 📖 What the System Is
+**What the System Is & How It Works**
+The Mfano Bora Resources Portal is a central digital library designed to safely store, manage, and share important organisational documents. It uses a PostgreSQL database to organise files and track downloads. Following a recent architectural update, the system now utilizes a vanilla HTML/CSS/JS frontend that interacts securely with a lightweight PHP REST API. This removes the need for Node.js or complex React build steps, making it exceptionally easy to integrate into traditional web servers.
 
-The Mfano Bora Resources Portal is a central digital library designed to safely store, manage, and share important organisational documents. It acts as a single hub where users can easily find and download materials such as industrial attachment forms, ICT cybersecurity guides, road safety manuals, and corporate award brochures.
+---
 
-## ⚙️ How It Works
+## Version Control & Branches
 
-The project is divided into three main components working together to deliver a seamless experience:
+To accommodate this architectural shift while preserving past work, our repository is divided into two primary branches:
 
-* **The Database (PostgreSQL):** This stores the structure of the portal, organising files logically into Categories (e.g., "Transport & Fleet Safety") and Sub-Categories (e.g., "Road Safety Guides"). It also keeps track of how many times a file has been downloaded.
+* **`main` Branch:** This is the active, production-ready branch containing the refactored Vanilla PHP and HTML/CSS/JS stack.
+* **`React-Node.js` Branch:** This branch serves as an archive for the legacy React frontend and Express.js backend codebase.
+
+---
+
+## System Directory & File Routing
+
+The repository is modularly structured with clear relative paths to ensure easy navigation on GitHub and straightforward integration:
+
+* **`database/`**: Contains `schema.sql` and `seed.sql` to construct the database tables and inject initial sample data.
 
 
-* **The Backend API (Node.js):** This acts as the secure bridge between the database and the user interface. It processes searches, fetches the correct documents, and requires a secure secret key (`x-api-key`) before allowing anyone to add or delete files.
+* **`config/config.example.php`**: The base template for your core application settings and database connections.
 
 
-* **The Admin Dashboard (React):** A simple, user-friendly control panel for Mfano Bora staff. It allows non-technical administrators to securely upload new PDFs, categorise them, feature important documents on the home page, and manage the knowledge base without needing to write code.
+* **`api/`**: Houses the PHP REST backend, including protected administrative endpoints (e.g., `api/admin/resources.php`) for managing the portal.
+
+
+* **`admin/`**: Contains the frontend interface (`index.html` and `js/admin.js`), serving as the control panel for staff to categorise and upload PDFs.
 
 
 
 ---
 
-## 🚀 Getting Started
+## Windows Setup & Configuration Guide
 
-Follow these step-by-step instructions to clone the repository, install the necessary dependencies, and run the project locally on your machine.
+Windows users should bypass the `.sh` automated scripts and manually configure the environment using standard development tools.
 
-### 1. Clone the Repository
-
-First, download the project files to your computer using Git. Open your terminal and run:
-
-```bash
-git clone https://github.com/Kenjin32icon/Mfano-Bora-Resources-Portal.git
-cd Mfano-Bora-Resources-Portal
-
-```
-
-### 2. Set Up the Database
-
-You need to have PostgreSQL installed and running on your computer.
-
-1. Create a new database named `mfano_bora_db`.
+* **Required Tools:** Install a local server environment (such as XAMPP or WAMP) to serve the PHP files, alongside a standard PostgreSQL Windows installer.
+* **Database Setup:** Open pgAdmin, create a new database named `mfano_bora_db`, and manually run the scripts inside the `database/` folder to build your tables.
 
 
-2. Run the provided SQL scripts to build the tables and insert the initial sample data:
+* **Core Configuration:** In the `config/` directory, duplicate `config.example.php` and rename the copy to `config.php`.
 
 
+* **Database Credentials:** Open `config.php` and update the `'user'` and `'password'` fields to match your local PostgreSQL credentials.
 
-```bash
-psql -U postgres -d mfano_bora_db -f database/schema.sql
-psql -U postgres -d mfano_bora_db -f database/seed.sql
 
-```
-
-### 3. Configure Environment Variables
-
-You must set up secret configuration files (called `.env` files) so the different parts of the system can talk to each other securely.
-
-**For the Backend API:**
-Create a file named `.env` inside the `backend-api/` folder and add the following:
-
-```env
-PORT=5000
-DATABASE_URL=postgresql://postgres:postgres@localhost:5432/mfano_bora_db
-ADMIN_API_KEY=your_secret_admin_password
-
-```
-
-**For the Admin Dashboard:**
-Create a file named `.env` inside the `admin-dashboard/` folder and add the following:
-
-```env
-REACT_APP_ADMIN_API_KEY=your_secret_admin_password
-
-```
-
-(Note: Ensure the password is exactly the same in both files so the dashboard can verify its identity with the backend.)
-
-### 4. Install Dependencies
-
-You need to install the required software packages for both the backend and the frontend.
-
-**Install Backend Dependencies:**
-
-```bash
-cd backend-api
-npm install
-
-```
-
-**Install Frontend Dependencies:**
-
-```bash
-cd ../admin-dashboard
-npm install
-
-```
-
-### 5. Run the Project
-
-To see the system in action, you will need to run the backend and the dashboard at the same time. It is easiest to open two separate terminal windows.
-
-**Terminal 1: Start the Backend API**
-
-```bash
-cd backend-api
-npm run dev
-
-```
-
-You should see a message saying "Backend Server running on port 5000".
-
-**Terminal 2: Start the Admin Dashboard**
-
-```bash
-cd admin-dashboard
-npm start
-
-```
-
-This will open the React Admin Panel in your web browser, allowing you to view and manage your existing resources.
+* **Security & Connection:** Generate a secure password for the `'admin_api_key'` in `config.php`, and update the `API_BASE` variable inside `admin/js/admin.js` to match your local XAMPP/WAMP folder path (e.g., `/mfano-bora/api`).
